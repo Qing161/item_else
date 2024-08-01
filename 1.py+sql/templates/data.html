@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库连接表单</title>
+    <style>
+        body { background-color: #dce9f3; font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
+        h1 { color: #2c3e50; text-align: center; font-size: 2em; margin-bottom: 20px; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: #fff; margin: 10px 0; padding: 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
+        a { text-decoration: none; color: #2c3e50; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Database Tables</h1>
+    <ul>
+        {% for table in tables %}
+            <li><a href="{{ url_for('table_image', name=name, username=username, password=password, database=database, table=table) }}">{{ table }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}" class="home_href">首页</a>
+</body>
+</html>

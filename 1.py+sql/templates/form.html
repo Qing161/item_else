@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>数据库连接表单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        *
+        {
+            margin: 0;
+            padding: 0;
+            background: rgba(167, 189, 226, 0.2);
+        }
+
+        .from
+        {
+            height: 100vh; /* 使容器高度适应屏幕 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .submit
+        {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form_title
+        {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form_input
+        {
+            width: 100%;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .inputs
+        {
+            flex: 1;
+            height: 50px;
+            border-radius: 5px;
+            border: none;
+            background-color: #eee;
+            color: #666;
+            padding-left: 20px;
+            font-size: 18px;
+        }
+
+        .form_input span
+        {
+            min-width: 110px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .btn_submit
+        {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .btn
+        {
+            border: none;
+            width: 100px;
+            height: 50px;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            background: #999;
+        }
+
+        .btn:hover
+        {
+            background: #666;
+        }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            .submit {
+                padding: 10px;
+            }
+
+            .form_input {
+                flex-direction: column;
+            }
+
+            .form_input span {
+                min-width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .inputs {
+                margin-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="from">
+        <div class="submit">
+            <span class="form_title">个人信息提交</span>
+            <form action="/submit" method="post">
+                <div class="form_input">
+                    <span>账号名：</span>
+                    <input class="inputs" type="text" name="name" value="">
+                </div>
+                <div class="form_input">
+                    <span>用户:</span>
+                    <input class="inputs" type="text" name="username" value="">
+                </div>
+                <div class="form_input">
+                    <span>密码：</span>
+                    <input class="inputs" type="password" name="password" value="">
+                </div>
+                <div class="form_input">
+                    <span>数据库：</span>
+                    <input class="inputs" type="text" name="database" value="">
+                </div>
+
+                <div class="btn_submit">
+                    <button class="btn" type="submit">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

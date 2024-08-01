@@ -1,0 +1,28 @@
+<!-- templates/table_image.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据图像与表格</title>
+    <style>
+        *
+        {
+            margin: 0;
+            padding: 0;
+            background: rgba(207, 216, 234, 0.2);
+        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table.data { border-collapse: collapse; width: 100%; }
+        table.data th, table.data td { border: 1px solid #ddd; padding: 8px; }
+        table.data th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>来自 {{ table }} 的数据</h1>
+    <h2>数据表格</h2>
+    {{ html_table | safe }}
+    <br><a href="{{ url_for('data', name=name, username=username, password=password, database=database) }}">返回表列表</a>
+    <a href="{{ url_for('index') }}" class="home_href">首页</a>
+</body>
+</html>
