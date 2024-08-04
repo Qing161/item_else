@@ -1,8 +1,12 @@
+#可以提醒的计划 0802
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 import json
 import datetime
 import os
+import threading
+import time
+from plyer import notification
 
 class Task:
     def __init__(self, name, deadline):
@@ -15,7 +19,6 @@ class TaskManagerApp:
         self.root.title("计划表")
         self.root.geometry("400x600")
         self.root.attributes("-topmost", True)
-        # self.root.configure(bg='#c5e5f4')
         self.root.wm_attributes("-transparentcolor", "#c5e5f4")
         self.root.wm_attributes("-alpha", 0.9)
 
@@ -34,12 +37,15 @@ class TaskManagerApp:
                                             bg="SystemButtonFace")
         self.delete_task_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-
         self.load_tasks()
         self.update_task_list()
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
+        # 启动提醒线程
+        self.reminder_thread = threading.Thread(target=self.check_reminders)
+        self.reminder_thread.daemon = True
+        self.reminder_thread.start()
 
     def add_task(self):
         task_name = simpledialog.askstring("添加计划", "请输入计划名称:")
@@ -55,8 +61,8 @@ class TaskManagerApp:
                     messagebox.showerror("错误", "时间格式不正确，请使用 HH:MM 格式。")
 
     def load_tasks(self):
-        if os.path.exists("tasks.txt"):
-            with open("tasks.txt", "r", encoding="utf-8") as file:
+        if os.path.exists("templates/tasks.txt"):
+            with open("templates/tasks.txt", "r", encoding="utf-8") as file:
                 tasks_data = json.load(file)
                 self.tasks = [
                     Task(task['name'], task['deadline'])
@@ -75,22 +81,37 @@ class TaskManagerApp:
         for task in sorted_tasks:
             self.task_listbox.insert(tk.END, f"{task.name} (截止: {task.deadline.strftime('%H:%M')})")
 
-    def load_tasks(self):
-        if os.path.exists("tasks.txt"):
-            with open("tasks.txt", "r", encoding="utf-8") as file:
-                tasks_data = json.load(file)
-                self.tasks = [
-                    Task(task['name'], task['deadline'])
-                    for task in tasks_data
-                ]
-
     def save_tasks(self):
         tasks_data = [
             {'name': task.name, 'deadline': task.deadline.strftime('%H:%M')}
             for task in self.tasks
         ]
-        with open("tasks.txt", "w", encoding="utf-8") as file:
+        with open("templates/tasks.txt", "w", encoding="utf-8") as file:
             json.dump(tasks_data, file)
+
+
+    def check_reminders(self):
+        notified_tasks = set()  
+        while True:
+            now = datetime.datetime.now().time()
+            for task in self.tasks:
+                
+                deadline_minus_one_minute = (
+                            datetime.datetime.combine(datetime.date.today(), task.deadline) - datetime.timedelta(
+                        minutes=1)).time()
+
+                
+                if deadline_minus_one_minute <= now < task.deadline:
+                    if task.name not in notified_tasks:  
+                        notification.notify(
+                            title='提醒',
+                            message=f'计划提醒: {task.name} 要截止了！',
+                            timeout=10
+                        )
+                        notified_tasks.add(task.name)  
+                elif now >= task.deadline and task.name in notified_tasks:
+                    notified_tasks.remove(task.name)  
+            time.sleep(60)  
 
     def on_closing(self):
         self.save_tasks()
