@@ -78,8 +78,9 @@ class TaskManagerApp:
     def update_task_list(self):
         self.task_listbox.delete(0, tk.END)
         sorted_tasks = sorted(self.tasks, key=lambda task: task.deadline)
-        for task in sorted_tasks:
+        for i, task in enumerate(sorted_tasks):
             self.task_listbox.insert(tk.END, f"{task.name} (截止: {task.deadline.strftime('%H:%M')})")
+            self.task_listbox.itemconfig(i, {'fg': 'red'})  # 更改计划列表中字体颜色
 
     def save_tasks(self):
         tasks_data = [
@@ -89,29 +90,48 @@ class TaskManagerApp:
         with open("templates/tasks.txt", "w", encoding="utf-8") as file:
             json.dump(tasks_data, file)
 
+    # def check_reminders(self):
+    #     notified_tasks = set()  # Track notified tasks
+    #     while True:
+    #         now = datetime.datetime.now().time()
+    #         for task in self.tasks:
+    #             # Check if the current time is within a minute of the task's deadline
+    #             if task.deadline <= now <= (
+    #                     datetime.datetime.combine(datetime.date.today(), task.deadline) + datetime.timedelta(
+    #                     minutes=1)).time():
+    #                 if task.name not in notified_tasks:  # Notify only once
+    #                     notification.notify(
+    #                         title='时间到了',
+    #                         message=f'计划提醒: {task.name} 截止时间到了！',
+    #                         timeout=10
+    #                     )
+    #                     notified_tasks.add(task.name)  # Mark as notified
+    #             elif task.name in notified_tasks:
+    #                 notified_tasks.remove(task.name)  # Reset notification status after deadline has passed
+    #         time.sleep(60)  # Check every minute
 
     def check_reminders(self):
-        notified_tasks = set()  
+        notified_tasks = set()  # Track notified tasks
         while True:
             now = datetime.datetime.now().time()
             for task in self.tasks:
-                
+                # Calculate the time 1 minute before the task's deadline
                 deadline_minus_one_minute = (
                             datetime.datetime.combine(datetime.date.today(), task.deadline) - datetime.timedelta(
                         minutes=1)).time()
 
-                
+                # Check if the current time is within 1 minute before the task's deadline
                 if deadline_minus_one_minute <= now < task.deadline:
-                    if task.name not in notified_tasks:  
+                    if task.name not in notified_tasks:  # Notify only once
                         notification.notify(
                             title='提醒',
                             message=f'计划提醒: {task.name} 要截止了！',
                             timeout=10
                         )
-                        notified_tasks.add(task.name)  
+                        notified_tasks.add(task.name)  # Mark as notified
                 elif now >= task.deadline and task.name in notified_tasks:
-                    notified_tasks.remove(task.name)  
-            time.sleep(60)  
+                    notified_tasks.remove(task.name)  # Reset notification status after deadline has passed
+            time.sleep(60)  # Check every minute
 
     def on_closing(self):
         self.save_tasks()
